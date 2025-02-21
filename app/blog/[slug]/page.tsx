@@ -3,6 +3,12 @@ import { CustomMDX } from "app/components/mdx";
 import { formatDate, getBlogPosts } from "app/blog/utils";
 import { baseUrl } from "app/sitemap";
 
+const authorMapping: Record<string, string> = {
+  Симоненко: "Василь Симоненко",
+};
+
+const getAuthorDetails = (author: string) => authorMapping[author] || author;
+
 export async function generateStaticParams() {
   let posts = getBlogPosts();
 
@@ -75,7 +81,7 @@ export default function Blog({ params }) {
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               "@type": "Person",
-              name: "My Portfolio",
+              name: getAuthorDetails(post.metadata.author),
             },
           }),
         }}
@@ -83,9 +89,14 @@ export default function Blog({ params }) {
       <h1 className="title font-semibold text-2xl tracking-tighter">
         {post.metadata.title}
       </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
+      <div className="flex justify-between items-center mt-2 text-sm">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {formatDate(post.metadata.publishedAt)}
+        </p>
+      </div>
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          {getAuthorDetails(post.metadata.author)}
         </p>
       </div>
       <article className="prose">
