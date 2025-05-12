@@ -3,11 +3,19 @@ import { CustomMDX } from "app/components/mdx";
 import { formatDate, getBlogPosts } from "app/blog/utils";
 import { baseUrl } from "app/sitemap";
 
-const authorMapping: Record<string, string> = {
-  Симоненко: "Василь Симоненко",
+const authorMapping: Record<string, { name: string; image: string }> = {
+  Симоненко: {
+    name: "Василь Симоненко",
+    image: "/assets/Symonenko.png",
+  },
+  Леся: {
+    name: "Леся Українка",
+    image: "/assets/Lesya.png",
+  },
 };
 
-const getAuthorDetails = (author: string) => authorMapping[author] || author;
+const getAuthorDetails = (author: string) =>
+  authorMapping[author] || { name: author, image: "/assets/unknown.png" };
 
 export async function generateStaticParams() {
   let posts = getBlogPosts();
@@ -62,6 +70,8 @@ export default function Blog({ params }) {
     notFound();
   }
 
+  const authorDetails = getAuthorDetails(post.metadata.author);
+
   return (
     <section>
       <script
@@ -81,27 +91,32 @@ export default function Blog({ params }) {
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               "@type": "Person",
-              name: getAuthorDetails(post.metadata.author),
+              name: authorDetails.name,
             },
           }),
         }}
       />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
-        {post.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
-        </p>
+      <div className="flex space-x-4 justify-center items-center">
+        <div className="flex flex-1">
+          <img width="400px" height="auto" src={authorDetails.image} />
+        </div>
+        <div className="flex flex-col flex-1">
+          <h1 className="title font-semibold text-2xl tracking-tighter">
+            {post.metadata.title}
+          </h1>
+          <div className="flex justify-between items-center mt-2 text-sm">
+            <p className="text-sm text-neutral-600">
+              {formatDate(post.metadata.publishedAt)}
+            </p>
+          </div>
+          <div className="flex justify-between items-center mt-2 mb-8 text-sm">
+            <p className="text-sm text-neutral-600">{authorDetails.name}</p>
+          </div>
+          <article className="prose">
+            <CustomMDX source={post.content} />
+          </article>
+        </div>
       </div>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {getAuthorDetails(post.metadata.author)}
-        </p>
-      </div>
-      <article className="prose">
-        <CustomMDX source={post.content} />
-      </article>
     </section>
   );
 }
