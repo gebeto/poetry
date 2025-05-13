@@ -3,19 +3,28 @@ import { CustomMDX } from "app/components/mdx";
 import { formatDate, getBlogPosts } from "app/blog/utils";
 import { baseUrl } from "app/sitemap";
 
+import SymonenkoImage from "../../../public/assets/Symonenko.png";
+import LesyaImage from "../../../public/assets/Lesya.png";
+import ShevchenkoImage from "../../../public/assets/Shevchenko.png";
+import UnknownImage from "../../../public/assets/unknown.png";
+
 const authorMapping: Record<string, { name: string; image: string }> = {
   Симоненко: {
     name: "Василь Симоненко",
-    image: "/assets/Symonenko.png",
+    image: SymonenkoImage.src,
   },
   Леся: {
     name: "Леся Українка",
-    image: "/assets/Lesya.png",
+    image: LesyaImage.src,
+  },
+  Шевченко: {
+    name: "Тарас Шевченко",
+    image: ShevchenkoImage.src,
   },
 };
 
 const getAuthorDetails = (author: string) =>
-  authorMapping[author] || { name: author, image: "/assets/unknown.png" };
+  authorMapping[author] || { name: author, image: UnknownImage.src };
 
 export async function generateStaticParams() {
   let posts = getBlogPosts();
